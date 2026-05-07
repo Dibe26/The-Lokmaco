@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'SNPro-Bold';
+    src: url(../fonts/SNPro-Bold.ttf);
+}
+@font-face {
+    font-family: 'SNPro-Italic';
+    src: url(../fonts/SNPro-Italic.ttf);
+}
+@font-face {
+    font-family: 'SNPro-Light';
+    src: url(../fonts/SNPro-Light.ttf);
+}
+@font-face {
+    font-family: 'SNPro-Regular';
+    src: url(../fonts/SNPro-Regular.ttf);
+}
+@font-face {
+    font-family: 'FA Regular';
+    src: url(../fonts/fa-regular-400.ttf);
+}
+@font-face {
+    font-family: 'FA light';
+    src: url(../fonts/fa-light-300.ttf);
+}

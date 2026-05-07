@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Lokmaco — кондитерская в Ташкенте. Гонконгские и бельгийские вафли, панкейки, фондю. Заказ онлайн.">
+    <title>The Lokmaco</title>
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/fonts.css">
+    <link rel="stylesheet" href="style/icons.css">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- ─── NAVIGATION ─────────────────────────── -->
+    <nav class="nav container">
+        <a href="" class="link-nav"><img src="img/logo.jpg" alt="The Lokmaco логотип"></a>
+
+        <ul class="nav-list">
+            <li><a href="javascript:void(2)" class="nav-list_link contacts">Контакты</a></li>
+            <li><a href="javascript:void(0)" class="nav-list_link order-link">Заказать</a></li>
+            <li><a href="javascript:void(1)" class="nav-list_link about-us-link">О нас</a></li>
+        </ul>
+
+        <!-- Кнопка корзины -->
+        <button class="cart-nav-btn" id="cart-nav-btn" aria-label="Открыть корзину">
+            <span class="cart-icon">🛒</span>
+            <span class="cart-badge" id="cart-badge" style="display:none;">0</span>
+        </button>
+    </nav>
+
+    <!-- ─── HEADER ─────────────────────────────── -->
+    <header class="header">
+        <video autoplay muted loop playsinline class="video-bg">
+            <source src="img/TheLokmaco_lokmalari_–_bu_har_luqmasida_baxt_Tashqarisi_qarsillagan.mp4" type="video/mp4">
+        </video>
+        <div class="header-content container">
+            <div class="brand">
+                <h2>The Lokmaco</h2>
+                <p>®</p>
+            </div>
+            <p>Искусство выпекать радость.</p>
+            <a href="javascript:void(0)">Сделать заказ</a>
+        </div>
+    </header>
+
+    <!-- ─── MAIN (меню генерируется JS из БД) ──── -->
+    <main class="main container">
+        <div class="descr">
+            <h2>Меню</h2>
+        </div>
+        <!-- Индикатор загрузки -->
+        <div id="menu-loader" class="menu-loader">
+            <div class="loader-spinner"></div>
+            <p>Загружаем меню...</p>
+        </div>
+        <!-- Сообщение об ошибке -->
+        <div id="menu-error" class="menu-error" style="display:none;">
+            <p>⚠️ Не удалось загрузить меню. Проверьте настройки Supabase.</p>
+        </div>
+    </main>
+
+    <!-- ─── ABOUT US ───────────────────────────── -->
+    <div class="aboutUs container">
+        <h2>The Lokmaco</h2>
+        <p>The Lokmaco — это концептуальная сеть кондитерских в Узбекистане, которая специализируется <br> на современных интерпретациях традиционных десертов и европейской выпечке.</p>
+        <p>Наши кафе оформлены в современном стиле с яркими акцентами.</p>
+        <p>Большинство точек оборудованы летними верандами или столиками на улице. В заведениях <br> доступен бесплатный Wi-Fi, что делает их популярными среди молодежи и фрилансеров.</p>
+    </div>
+
+    <!-- ─── FOOTER ─────────────────────────────── -->
+    <footer class="footer container">
+        <div class="footer-links">
+            <ul>
+                <li><a href="javascript:void(0)" class="order-link">Заказать</a></li>
+                <li><a href="javascript:void(1)" class="about-us-link">О нас</a></li>
+            </ul>
+        </div>
+        <div class="footer__contact">
+            <h2>Контакты</h2>
+            <p>Адрес: г. Ташкент, ул. Шота Руставели, 9</p>
+            <p>Телефон: +998 90 123 45 67</p>
+            <p>Email: info@lokmaco.uz</p>
+        </div>
+    </footer>
+
+    <!-- ─── CART OVERLAY ───────────────────────── -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <!-- ─── CART SIDEBAR ──────────────────────── -->
+    <aside class="cart-sidebar" id="cart-sidebar" role="dialog" aria-label="Корзина">
+        <div class="cart-sidebar__header">
+            <h2>Корзина 🛒</h2>
+            <button class="cart-close-btn" id="cart-close-btn" aria-label="Закрыть корзину">✕</button>
+        </div>
+
+        <!-- Пустая корзина -->
+        <div id="cart-empty-msg" class="cart-empty">
+            <p>🧇</p>
+            <p>Ваша корзина пуста</p>
+            <p>Добавьте что-нибудь вкусненькое!</p>
+        </div>
+
+        <!-- Список товаров -->
+        <ul class="cart-items-list" id="cart-items-list"></ul>
+
+        <!-- Итоговая сумма -->
+        <div class="cart-total-block" id="cart-total-block">
+            <span>Итого:</span>
+            <strong><span id="cart-total">0</span> сум</strong>
+        </div>
+
+        <!-- Форма заказа -->
+        <div id="order-form-section" class="order-form-section" style="display:none;">
+            <h3>Оформление заказа</h3>
+            <form id="order-form" novalidate>
+                <div class="form-group">
+                    <label for="order-name">Ваше имя</label>
+                    <input
+                        type="text"
+                        id="order-name"
+                        name="name"
+                        placeholder="Введите имя"
+                        required
+                        autocomplete="given-name"
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="order-phone">Телефон</label>
+                    <input
+                        type="tel"
+                        id="order-phone"
+                        name="phone"
+                        placeholder="+998 XX XXX XX XX"
+                        required
+                        autocomplete="tel"
+                    >
+                </div>
+                <button type="submit" class="order-submit-btn" id="order-submit-btn">
+                    Оформить заказ
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ─── ORDER SUCCESS MODAL ────────────────── -->
+    <div class="order-success-modal" id="order-success-modal" role="alertdialog">
+        <div class="order-success-modal__window">
+            <div class="success-icon">✅</div>
+            <h2>Заказ принят!</h2>
+            <p>Номер заказа: <strong>#<span id="success-order-id">—</span></strong></p>
+            <p>Сумма: <strong><span id="success-order-total">0</span> сум</strong></p>
+            <p class="success-note">Мы свяжемся с вами в ближайшее время.</p>
+            <button class="receipt__window-btn" id="success-close-btn">Отлично!</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
